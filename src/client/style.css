@@ -7,60 +7,135 @@ html, body {
     font-family: Helvetica, sans-serif;
     overflow: hidden;
     background-size: 40px 40px;
-  background-image: radial-gradient(circle, #8888 1px, transparent 1px);
+    background-image: radial-gradient(circle, #8888 1px, transparent 1px);
 }
 
 * {
     box-sizing: border-box;
 }
 
-#user-name-box {
+.box {
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 300px;
-    background: #484;
+    background: #448;
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 20px;
     color: #fff;
     text-align: center;
     font-size: 30px;
     line-height: 1em;
-    border: solid 1px #373;
+    border: solid 1px #337;
     box-shadow: 1px 1px 5px #888;
-    font-family: 'Segoe Script';
     opacity: 1;
     transition: all .5s;
+    z-index: 1000;
 }
 
 #user-name-box em {
     display: block;
     font-style: normal;
-    text-transform: uppercase;
     font-size: 50px;
     line-height: 1em;
 }
 
-#user-name-box input {
+.box input,
+.box select,
+.box button,
+.box textarea {
     font-size: 30px;
     width: 100%;
     padding: 10px;
-    margin-top: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     border: none;
     text-align: center;
-    background-color: #ada;
+    background-color: #bbe;
     outline: none;
-    border: solid 2px #484;
+    border: solid 2px #448;
 }
 
-#user-name-box input:focus,
-#user-name-box input:active {
-    border: solid 2px #efe;
+.box input:focus,
+.box input:active,
+.box select:focus,
+.box select:active,
+.box button:focus,
+.box button:active,
+.box textarea:focus,
+.box textarea:active {
+    border: solid 2px #eef;
+}
+
+.box button {
+    background: #66a;
+    border: solid 2px #337;
+    margin-top: 15px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.box textarea {
+    scrollbar-color: #888 transparent;
+    scrollbar-width: thin;
+    resize: none;
+    font-family: Helvetica, sans-serif;
+    font-size: 16px;
+    height: 100px;
+    text-align: left;
+}
+
+.box textarea::-webkit-scrollbar {
+    width: 7px;
+    background-color: transparent;
+}
+
+.box textarea::-webkit-scrollbar-thumb {
+    background-color: #88d;
+    border-radius: 3.5px;
+}
+
+.box .box-title {
+    font-family: 'Segoe Script';
+    margin-bottom: 20px;
+}
+
+.box label {
+    display: block;
+    font-size: .75em;
+    margin: 15px 0px 0px;
 }
 
 #user-name-box.hide {
-    top: 0px;
+    top: 0%;
     opacity: 0;
+}
+
+#game-settings-box.hide {
+    top: 100%;
+    opacity: 0;
+}
+
+#canvas {
+    position: absolute;
+    top: max(0px, 50vh - 25vw);
+    left: max(0px, 50vw - 100vh);
+    width: 100%;
+    max-width: 200vh;
+    height: 100%;
+    max-height: 50vw;
+    background:
+        linear-gradient(to right, #ddd 8px, transparent 8px) 0 0,
+        linear-gradient(to right, #ddd 8px, transparent 8px) 0 100%,
+        linear-gradient(to left, #ddd 8px, transparent 8px) 100% 0,
+        linear-gradient(to left, #ddd 8px, transparent 8px) 100% 100%,
+        linear-gradient(to bottom, #ddd 8px, transparent 8px) 0 0,
+        linear-gradient(to bottom, #ddd 8px, transparent 8px) 100% 0,
+        linear-gradient(to top, #ddd 8px, transparent 8px) 0 100%,
+        linear-gradient(to top, #ddd 8px, transparent 8px) 100% 100%;
+    background-repeat: no-repeat;
+    background-size: 40px 40px;
+    overflow: visible;
+    user-select: none;
+    touch-action: none;
 }

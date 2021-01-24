@@ -29,7 +29,6 @@ io.on('connection', (socket) => {
         var userID = storage.findUser(user => user.socket == socket.id);
         if (userID) {
             var game = {
-                type: data.type,
                 players: [userID]
             };
             var id = Math.random().toString(36).substr(2);
@@ -64,7 +63,7 @@ io.on('connection', (socket) => {
     socket.on('event', data => {
         var gameID = storage.findGame(game => game.players.includes(data.id));
         if (gameID) {
-            io.to(gameID).volatile.emit('event', data);
+            socket.to(gameID).emit('event', data);
         }
     });
 

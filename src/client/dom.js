@@ -29,7 +29,7 @@ var extensions = {
 
 export default function dom(query) {
     return Object.assign(
-        document.querySelector(query),
+        query ? document.querySelector(query) : document,
         extensions);
 }
 
