@@ -1,5 +1,6 @@
 import { Canvas } from './components/canvas.js';
 import { Players } from './components/players.js';
+import dom from './dom.js';
 
 export class Game {
 
@@ -24,6 +25,9 @@ export class Game {
 
     handle(event) {
         switch (event.type) {
+            case 'start': 
+                this.state.current.drawing = this.state.users[0].id;
+                break;
             case 'draw-start':
                 var obj = {
                     type: 'line',
@@ -72,6 +76,7 @@ export class Game {
     }
 
     render() {
+        dom('#waiting-start-box').classList[ this.state.current.drawing ? 'add' : 'remove' ]('hide');
         this.canvas.render();
         this.players.render();
     }

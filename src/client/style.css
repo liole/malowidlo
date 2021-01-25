@@ -116,6 +116,11 @@ html, body {
     opacity: 0;
 }
 
+#waiting-start-box.hide {
+    top: 0%;
+    opacity: 0;
+}
+
 #canvas {
     position: absolute;
     top: max(0px, 50vh - 25vw);

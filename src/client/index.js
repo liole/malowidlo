@@ -39,6 +39,8 @@ dom('#createGame').on('click', e => {
     });
 });
 
+dom('#startGame').on('click', startGame);
+
 dom('#canvas').on('mousedown', handleDown);
 dom('#canvas').on('touchstart', handleDown);
 
@@ -151,4 +153,10 @@ function initGame(gameSettings) {
     });
     game.queueRender();
     window.game = game; // for debugging
+}
+
+function startGame() {
+    game.handle({
+        type: 'start'
+    });
 }
