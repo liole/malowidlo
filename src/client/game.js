@@ -1,18 +1,25 @@
 import { Canvas } from './components/canvas.js';
+import { Players } from './components/players.js';
 
 export class Game {
 
-    constructor(gameSettings) {
+    constructor(gameSettings, userID) {
         this.pushSync = () => {};
         this.pushEvent = event => {};
+        this.userID = userID;
         this.state = {
             settings: gameSettings,
             users: [],
             canvas: {
                 objects: []
+            },
+            current: {
+                drawing: null,
+                guessed: []
             }
         };
-        this.canvas = new Canvas(this.state);
+        this.canvas = new Canvas(this.state.canvas);
+        this.players = new Players(this.state);
     }
 
     handle(event) {
@@ -52,6 +59,7 @@ export class Game {
             Object.assign(this.state, state);
         }
         this.canvas.setState(this.state.canvas);
+        this.players.setState(this.state);
         this.queueRender();
     }
 
@@ -65,6 +73,7 @@ export class Game {
 
     render() {
         this.canvas.render();
+        this.players.render();
     }
 
 }

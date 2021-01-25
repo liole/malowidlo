@@ -139,3 +139,51 @@ html, body {
     user-select: none;
     touch-action: none;
 }
+
+#players {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.player-row {
+    position: absolute;
+    right: 0px;
+    padding: 0px 5px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    transition: all .5s;
+}
+
+.player-row .player-name::before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+.player-row.drawing {
+    color: #66d;
+}
+
+.player-row.drawing .player-name::before {
+    content: '\f303';
+}
+
+.player-row.guessed {
+    color: #484;
+}
+
+.player-row.guessed .player-name::before {
+    content: '\f00c';
+}
+
+.player-row div {
+    margin: 5px;
+}
+
+.player-row .player-score {
+    width: 50px;
+    text-align: center;
+    font-weight: bold;
+}

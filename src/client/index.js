@@ -6,6 +6,7 @@ var game = undefined;
 var gameID = location.hash.substr(1);
 var userID = localStorage.userID || (localStorage.userID = Math.random().toString(36).substr(2));
 var userName = localStorage.userName;
+var isDown = false;
 
 document.addEventListener("DOMContentLoaded", e => { 
     if (!userName) {
@@ -37,6 +38,32 @@ dom('#createGame').on('click', e => {
         wordsList: dom('#wordsList').value.split(',').map(w => w.trim()).filter(w => w),
     });
 });
+
+dom('#canvas').on('mousedown', handleDown);
+dom('#canvas').on('touchstart', handleDown);
+
+dom().on('mouseup', handleUp);
+dom().on('touchend', handleUp);
+
+dom().on('mousemove', handleMove);
+dom().on('touchmove', handleMove);
+
+socket.on('event', event => {
+    game.handle(event);
+});
+
+socket.on('request-sync', () => {
+    game.pushSync();
+});
+
+socket.on('sync', state => {
+    game.sync(state);
+});
+
+socket.on('new-player', player => {
+    game.addUser(player);
+});
+
 
 function getPoint(e) {
     var rect = dom('#canvas').getBoundingClientRect();
@@ -81,32 +108,6 @@ function handleMove(e) {
     }
 }
 
-var isDown = false;
-dom('#canvas').on('mousedown', handleDown);
-dom('#canvas').on('touchstart', handleDown);
-
-dom().on('mouseup', handleUp);
-dom().on('touchend', handleUp);
-
-dom().on('mousemove', handleMove);
-dom().on('touchmove', handleMove);
-
-socket.on('event', event => {
-    game.handle(event);
-});
-
-socket.on('request-sync', () => {
-    game.pushSync();
-});
-
-socket.on('sync', state => {
-    game.sync(state);
-});
-
-socket.on('new-player', player => {
-    game.addUser(player);
-});
-
 function connectUser() {
     socket.emit('user', { id: userID, name: userName });
     connectGame();
@@ -141,7 +142,7 @@ function joinGame() {
 }
 
 function initGame(gameSettings) {
-    game = new Game(gameSettings);
+    game = new Game(gameSettings, userID);
     game.pushSync = () => socket.emit('sync', { ...game.state, id: gameID });
     game.pushEvent = event => socket.emit('event', { ...event, id: userID });
     game.addUser({
