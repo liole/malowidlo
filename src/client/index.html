@@ -17,9 +17,9 @@
     <div id="game-settings-box" class="box hide">
       <div class="box-title">Game settings</div>
       <label for="turnDuration">Turn duration</label>
-      <input type=number id="turnDuration" value="80"></input>
+      <input type=number id="turnDuration" min="10" value="80"></input>
       <label for="numberOfChoices">Number of choices</label>
-      <input type=number id="numberOfChoices" value="3"></input>
+      <input type=number id="numberOfChoices" min="1" value="3"></input>
       <label for="wordsList">Words list</label>
       <textarea id="wordsList" value="3" placeholder="Please insert comma separated list of words/pharases to use...">test, two words, hyphe-nate, final</textarea>
       <button id="createGame">CREATE</button>
@@ -27,6 +27,14 @@
     <div id="waiting-start-box" class="box hide">
       <div class="box-title">Waiting for players...</div>
       <button id="startGame">START</button>
+    </div>
+    <div id="waiting-choice-box" class="box hide">
+      <div class="box-title">Waiting for a word from</div>
+      <div id="waitingForName">?</div>
+    </div>
+    <div id="words-choice-box" class="box hide">
+      <div class="box-title">Choose a word</div>
+      <div id="wordListButtons"></div>
     </div>
 
     <svg id="canvas" viewBox="0 0 100 50"></svg>

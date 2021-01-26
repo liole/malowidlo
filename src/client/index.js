@@ -35,7 +35,7 @@ dom('#createGame').on('click', e => {
     createGame({
         turnDuration: +dom('#turnDuration').value,
         numberOfChoices: +dom('#numberOfChoices').value,
-        wordsList: dom('#wordsList').value.split(',').map(w => w.trim()).filter(w => w),
+        words: dom('#wordsList').value.split(',').map(w => w.trim()).filter(w => w),
     });
 });
 
@@ -91,8 +91,7 @@ function handleUp(e) {
     if (game && isDown) {
         isDown = false;
         game.handle({
-            type: 'draw-stop',
-            point: getPoint(e)
+            type: 'draw-stop'
         });
         e.stopPropagation();
         e.preventDefault();
