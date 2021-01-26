@@ -39,10 +39,20 @@ dom('#createGame').on('click', e => {
     });
 });
 
+dom('#wordInput').on('keyup', e => {
+    if (e.key== 'Enter' && game) {
+        game.handle({
+            type: 'guess',
+            value: dom('#wordInput').value
+        });
+        dom('#wordInput').value = '';
+    }
+});
+
 dom('#startGame').on('click', startGame);
 
-dom('#canvas').on('mousedown', handleDown);
-dom('#canvas').on('touchstart', handleDown);
+dom().on('mousedown', handleDown);
+dom().on('touchstart', handleDown);
 
 dom().on('mouseup', handleUp);
 dom().on('touchend', handleUp);
@@ -95,6 +105,9 @@ function handleUp(e) {
         });
         e.stopPropagation();
         e.preventDefault();
+    }
+    if (game && !game.canDraw()) {
+        dom('#wordInput').focus();
     }
 }
 

@@ -1,6 +1,7 @@
 import { Canvas } from './components/canvas.js';
 import { Players } from './components/players.js';
 import { Words } from './components/words.js';
+import { Word } from './components/word.js';
 import dom from './dom.js';
 
 export class Game {
@@ -28,6 +29,7 @@ export class Game {
         this.canvas = new Canvas(this.state.canvas);
         this.players = new Players(this.state);
         this.words = new Words(this.state.settings, e => this.handle(e));
+        this.word = new Word(this.state.current, this.userID);
     }
 
     handle(event) {
@@ -93,6 +95,7 @@ export class Game {
         }
         this.canvas.setState(this.state.canvas);
         this.players.setState(this.state);
+        this.word.setState(this.state.current);
         this.queueRender();
     }
 
@@ -123,6 +126,7 @@ export class Game {
         this.canvas.render();
         this.players.render();
         this.words.render();
+        this.word.render();
     }
 
 }
