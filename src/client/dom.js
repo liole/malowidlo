@@ -28,9 +28,8 @@ var extensions = {
 };
 
 export default function dom(query) {
-    return Object.assign(
-        query ? document.querySelector(query) : document,
-        extensions);
+    var result = query ? document.querySelector(query) : document;
+    return result ? Object.assign(result, extensions) : null;
 }
 
 dom.new = function newElement(tag, options = {}, children = []) {

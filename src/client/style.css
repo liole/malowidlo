@@ -234,11 +234,82 @@ html, body {
     z-index: 2;
     outline: none;
     width: 100%;
-    -webkit-text-stroke: solid 2px white;
 }
 
 #wordInput:not([disabled]) {
     user-select: auto;
     pointer-events: all;
     touch-action: auto;
+}
+
+.chat-container {
+    position: absolute;
+    display: block;
+    bottom: 0px;
+    left: 0px;
+    height: 75%;
+    width: 25%;
+    overflow: hidden;
+    mask-image: linear-gradient(0deg, #000 50%, transparent);
+    -webkit-mask-image: linear-gradient(0deg, #000 50%, transparent);
+}
+
+#chat {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    padding: 20px 10px;
+    display: table;
+    bottom: 0px;
+}
+
+.chat-row {
+    display: table-row;
+}
+
+.chat-name {
+    display: table-cell;
+    text-align: right;
+    padding: 2px 5px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.chat-message {
+    display: table-cell;
+    text-align: left;
+    padding: 2px 5px;
+}
+
+.chat-break {
+    padding:10px;
+    width: 100%;
+    text-align: center;
+}
+.chat-break::before {
+    content: '';
+    width: calc(100% - 40px);
+    position: absolute;
+    left: 0px;
+    margin: 0px 20px;
+    display: inline-block;
+    border-bottom: dashed 2px #000;
+}
+
+.chat-row.drawing {
+    color: #66d;
+}
+
+.chat-row.drawing::after {
+    content: 'drawing...';
+    font-family: 'Segoe Script';
+    font-weight: bold;
+}
+
+.chat-row.guessed {
+    color: #4a4;
+}
+
+.chat-row.close-guess {
+    color: #bb4;
 }

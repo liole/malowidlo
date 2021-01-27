@@ -1,4 +1,5 @@
 import dom from '../dom.js';
+import { applyMask } from '../utils.js';
 
 export class Word {
 
@@ -21,13 +22,15 @@ export class Word {
         }
 
         if (this.state.word) {
-            var mask = this.state.word.replace(/\p{L}/uig, '_');
+            var mask = applyMask(this.state.word, '_');
             dom('#wordMask').innerText = mask;
         }
 
         var isDrawing = this.state.drawing == this.userID;
-        dom('#wordInput').disabled = isDrawing ? 'disabled' : '';
-        if (isDrawing) {
+        var isGuessed = this.state.guessed.map(g => g.id).includes(this.userID);
+        var showWord = isDrawing || isGuessed;
+        dom('#wordInput').disabled = showWord ? 'disabled' : '';
+        if (showWord) {
             dom('#wordInput').value = this.state.word;
         }
     }

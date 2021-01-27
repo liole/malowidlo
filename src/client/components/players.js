@@ -42,7 +42,7 @@ export class Players {
             var isDrawing = this.state.current.drawing == player.id;
             $player.row.classList[ isDrawing ? 'add' : 'remove']('drawing');
 
-            var hasGuessed = this.state.current.guessed.includes(player.id);
+            var hasGuessed = this.state.current.guessed.map(g => g.id).includes(player.id);
             $player.row.classList[ hasGuessed ? 'add' : 'remove']('guessed');
         }
     }

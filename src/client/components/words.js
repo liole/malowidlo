@@ -37,14 +37,14 @@ export class Words {
             return;
         }
 
-        var root = dom('#wordListButtons');
-        root.clear();
+        var $root = dom('#wordListButtons');
+        $root.clear();
         this.$words = [];
         
         for (var word of this.state.choices) {
             var $word = dom.new('button', { innerText: word });
             $word.on('click', this.onChoice(word));
-            root.append($word);
+            $root.append($word);
             this.$words.push($word);
         }
     }
