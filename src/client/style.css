@@ -261,6 +261,7 @@ html, body {
     padding: 20px 10px;
     display: table;
     bottom: 0px;
+    text-shadow: 0px 0px 5px #fff, 1px 1px 5px #fff, -1px -1px 5px #fff, 1px -1px 5px #fff, -1px 1px 5px #fff;
 }
 
 .chat-row {
@@ -279,6 +280,10 @@ html, body {
     display: table-cell;
     text-align: left;
     padding: 2px 5px;
+}
+
+.chat-message.blur {
+    filter: blur(3px);
 }
 
 .chat-break {

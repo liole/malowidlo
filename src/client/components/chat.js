@@ -1,5 +1,5 @@
 import dom from '../dom.js';
-import { applyMask, findLast } from '../utils.js';
+import { applyMask, findLast, randomChar } from '../utils.js';
 
 export class Chat {
 
@@ -47,15 +47,17 @@ export class Chat {
                 case 'close-guess':
                 case 'guessed':
                     var value = message.value;
+                    var extraClasses = '';
                     if (message.type != 'guess' && message.user != this.userID) {
                         var drawing = findLast(this.state.messages, m => m.type == 'break');
                         if (!drawing || drawing.user != this.userID) {
-                            value = applyMask(value, '*');
+                            value = applyMask(value, () => randomChar());
+                            extraClasses += ' blur';
                         }
                     }
                     var $message = dom.new('div', { className: `chat-row ${message.type}` }, [
                         dom.new('div', { className: 'chat-name', innerText: this.users[message.user] }),
-                        dom.new('div', { className: 'chat-message', innerText: value })]);
+                        dom.new('div', { className: 'chat-message' + extraClasses, innerText: value })]);
                     $root.append($message);
             }
         } 

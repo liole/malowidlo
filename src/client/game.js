@@ -4,6 +4,9 @@ import { Players } from './components/players.js';
 import { Words } from './components/words.js';
 import { Word } from './components/word.js';
 import { Chat } from './components/chat.js';
+import { levDist } from './utils.js';
+
+const closeThreshold = 0.3;
 
 export class Game {
 
@@ -46,6 +49,7 @@ export class Game {
                 this.state.current.word = event.value;
                 break;
             case 'guess':
+                if (!event.value) return;
                 var result = this.processGuess(event.value, userID);
                 this.registerMessage(result, userID, event.value);
                 break;
@@ -84,13 +88,15 @@ export class Game {
     }
 
     processGuess(value, userID) {
+        var testing = value.toLowerCase();
+        var expecting = this.state.current.word.toLowerCase();
         var result = 'guess';
-        if (value == this.state.current.word) {
+        if (testing == expecting) {
             result = 'guessed';
             this.state.current.guessed.push({
                 id: userID
             });
-        } else if (false) { // TODO: calculate if words are close
+        } else if (levDist(testing, expecting) / expecting.length < closeThreshold) {
             result = 'close-guess';
         }
         return result;
