@@ -5,6 +5,7 @@ import { Words } from './components/words.js';
 import { Word } from './components/word.js';
 import { Chat } from './components/chat.js';
 import { levDist } from './utils.js';
+import { Timer } from './components/timer.js';
 
 const closeThreshold = 0.3;
 
@@ -28,14 +29,16 @@ export class Game {
             current: {
                 drawing: null,
                 guessed: [],
-                word: null
-            }
+                word: null,
+                elapsed: 0
+            },
         };
         this.canvas = new Canvas(this.state.canvas);
         this.players = new Players(this.state);
         this.words = new Words(this.state.settings, e => this.handle(e));
         this.word = new Word(this.state.current, this.userID);
         this.chat = new Chat(this.state, this.userID);
+        this.timer = new Timer(this.state.current, this.state.settings, () => this.tick());
     }
 
     handle(event) {
@@ -43,7 +46,6 @@ export class Game {
         switch (event.type) {
             case 'start': 
                 this.resetCurrentState();
-                this.registerMessage('break', this.state.current.drawing);
                 break;
             case 'word':
                 this.state.current.word = event.value;
@@ -80,10 +82,12 @@ export class Game {
     resetCurrentState() {
         var index = this.state.users.findIndex(u => u.id == this.state.current.drawing);
         index = (index + 1) % this.state.users.length;
+
         this.state.current = {
             drawing: this.state.users[index].id,
             guessed: [],
             word: null,
+            elapsed: 0
         };
     }
 
@@ -106,6 +110,11 @@ export class Game {
         this.state.messages.push({ value, user, type });
     }
 
+    tick() {
+        this.state.current.elapsed++;
+        this.sync();
+    }
+
     canDraw(userID = this.userID) {
         return (userID == this.state.current.drawing) && this.state.current.word;
     }
@@ -123,6 +132,14 @@ export class Game {
             Object.assign(this.state, state);
         }
 
+        if (this.state.current.elapsed >= this.state.settings.turnDuration) {
+            this.timer.stop();
+            // TODO: show score
+            this.resetCurrentState();
+        } else if (this.state.current.drawing && this.state.current.word) {
+            this.timer.start();
+        }
+
         // TODO: move to inner state of 'words'
         if (this.state.current.drawing == this.userID) {
             this.words.generateWords();
@@ -132,6 +149,7 @@ export class Game {
         this.players.setState(this.state);
         this.word.setState(this.state.current);
         this.chat.setState(this.state);
+        this.timer.setState(this.state.current);
         this.queueRender();
     }
 
@@ -164,6 +182,7 @@ export class Game {
         this.words.render();
         this.word.render();
         this.chat.render();
+        this.timer.render();
     }
 
 }
