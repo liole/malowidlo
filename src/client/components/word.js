@@ -24,6 +24,9 @@ export class Word {
         if (this.state.word) {
             var mask = applyMask(this.state.word, '_');
             dom('#wordMask').innerText = mask;
+        } else {
+            dom('#wordMask').innerText = '';
+            dom('#wordInput').value = '';
         }
 
         var isDrawing = this.state.drawing == this.userID;
@@ -33,6 +36,8 @@ export class Word {
         if (showWord) {
             dom('#wordInput').value = this.state.word;
         }
+
+        this.modified = false;
     }
 
 }

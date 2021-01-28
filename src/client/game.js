@@ -89,6 +89,12 @@ export class Game {
             word: null,
             elapsed: 0
         };
+
+        this.state.canvas = {
+            objects: []
+        };
+        
+        this.registerMessage('break', this.state.current.drawing);
     }
 
     processGuess(value, userID) {
@@ -130,6 +136,8 @@ export class Game {
     sync(state) {
         if (state) {
             Object.assign(this.state, state);
+            this.words.settings = this.state.settings;
+            this.timer.settings = this.state.settings;
         }
 
         if (this.state.current.elapsed >= this.state.settings.turnDuration) {

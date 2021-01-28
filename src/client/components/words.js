@@ -17,6 +17,8 @@ export class Words {
     }
 
     generateWords() {
+        if (this.state.choices.length) return;
+
         var words = [...this.settings.words];
         var choices = Array.from({ length: this.settings.numberOfChoices },
             (_, i) => ~~(Math.random() * (this.settings.words.length - i)))
@@ -25,11 +27,13 @@ export class Words {
     }
 
     onChoice(word) {
-        return e =>
+        return e => {
+            this.setState({ choices: [] });
             this.handle({
                 type: 'word',
                 value: word
             });
+        }
     }
 
     render() {
@@ -47,6 +51,8 @@ export class Words {
             $root.append($word);
             this.$words.push($word);
         }
+
+        this.modified = false;
     }
 
 }

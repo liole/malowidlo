@@ -60,7 +60,9 @@ export class Chat {
                         dom.new('div', { className: 'chat-message' + extraClasses, innerText: value })]);
                     $root.append($message);
             }
-        } 
+        }
+        
+        this.modified = false;
     }
 
 }
