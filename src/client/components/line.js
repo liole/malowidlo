@@ -22,6 +22,13 @@ export class Line {
         .join(' ');
     }
 
+    remove() {
+        if (this.$path) {
+            this.$path.remove();
+            this.$path = undefined;
+        }
+    }
+
     render() {
         if (!this.modified) {
             return;
@@ -32,12 +39,6 @@ export class Line {
                 style: `fill: none; stroke: ${this.state.color}; stroke-width: ${this.state.width}px; stroke-linecap: round; stroke-linejoin: round`
             });
             dom('#canvas').append(this.$path);
-        }
-
-        if (this.state.remove) {
-            this.$path.remove();
-            this.$path = undefined;
-            return;
         }
 
         this.$path.set('d', this.getPath());

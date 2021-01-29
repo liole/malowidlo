@@ -32,7 +32,7 @@ export class Word {
         var isDrawing = this.state.drawing == this.userID;
         var isGuessed = this.state.guessed.map(g => g.id).includes(this.userID);
         var showWord = isDrawing || isGuessed;
-        dom('#wordInput').disabled = showWord ? 'disabled' : '';
+        dom('#wordInput').disabled = (showWord || !this.state.word) ? 'disabled' : '';
         if (showWord) {
             dom('#wordInput').value = this.state.word;
         }

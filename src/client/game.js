@@ -134,6 +134,11 @@ export class Game {
         return (userID == this.state.current.drawing) && this.state.current.word;
     }
 
+    isTurnFinished() {
+        return this.state.current.elapsed >= this.state.settings.turnDuration ||
+            this.state.current.guessed.length == this.state.users.length - 1;
+    }
+
     addUser(user) {
         this.state.users.push({
             score: 0,
@@ -156,7 +161,7 @@ export class Game {
         this.timer.setState(this.state.current);
         this.score.setState(this.state);
 
-        if (this.state.current.elapsed >= this.state.settings.turnDuration) {
+        if (this.isTurnFinished()) {
             this.timer.stop();
             this.score.calculateScore();
             setTimeout(() => this.nextRound(), scoreVisibilityTimeout);
@@ -187,7 +192,6 @@ export class Game {
         var waitingForStart = !this.state.current.drawing;
         var waitingForOther = this.state.current.drawing && this.state.current.drawing != this.userID && !this.state.current.word;
         var waitingForSelf = this.state.current.drawing && this.state.current.drawing == this.userID && !this.state.current.word;
-        var turnScoreVisible = this.state.current.elapsed >= this.state.settings.turnDuration;
 
         if (waitingForStart) {
             dom('#startGame').disabled = this.state.users.length < 2 ? 'disabled' : '';
@@ -199,7 +203,7 @@ export class Game {
         this.renderBoxState('waiting-start', waitingForStart);
         this.renderBoxState('waiting-choice', waitingForOther);
         this.renderBoxState('words-choice', waitingForSelf);
-        this.renderBoxState('turn-score', turnScoreVisible);
+        this.renderBoxState('turn-score', this.isTurnFinished());
 
         this.canvas.render();
         this.players.render();

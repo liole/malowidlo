@@ -23,8 +23,8 @@ export class Canvas {
     }
 
     render() {
-        for (var i = this.state.objects.length; i < this.objects.length; ++i) {
-            this.objects[i].setState({ remove: true });
+        for (var obj of this.objects.splice(this.state.objects.length)) {
+            obj.remove();
         }
 
         for (var i = this.objects.length; i < this.state.objects.length; ++i) {

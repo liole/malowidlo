@@ -51,8 +51,8 @@ dom('#wordInput').on('keyup', e => {
 
 dom('#startGame').on('click', startGame);
 
-dom().on('mousedown', handleDown);
-dom().on('touchstart', handleDown);
+dom('#surface').on('mousedown', handleDown);
+dom('#surface').on('touchstart', handleDown);
 
 dom().on('mouseup', handleUp);
 dom().on('touchend', handleUp);
