@@ -49,6 +49,14 @@ dom('#wordInput').on('keyup', e => {
     }
 });
 
+dom().on('keyup', e => {
+    if (e.ctrlKey && e.key== 'z' && game) {
+        game.handle({
+            type: 'undo'
+        });
+    }
+});
+
 dom('#startGame').on('click', startGame);
 
 dom('#surface').on('mousedown', handleDown);

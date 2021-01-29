@@ -73,6 +73,10 @@ export class Game {
                 var lastIndex = this.state.canvas.objects.length - 1;
                 this.state.canvas.objects[lastIndex].points.push(event.point);
                 break;
+            case 'undo':
+                if (!this.canDraw(userID)) return;
+                this.state.canvas.objects.pop(); 
+                break;
             default:
                 return;
         }
