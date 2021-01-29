@@ -36,7 +36,7 @@ export class Score {
         }
     }
 
-    calculateScore() {
+    calculate() {
         var scores = [];
 
         var turnDuration = this.state.settings.turnDuration;
@@ -61,9 +61,20 @@ export class Score {
 
         var guessingScores = scores.filter(s => s.id != this.state.current.drawing).map(s => s.value);
         var drawingScore = scores.find(s => s.id == this.state.current.drawing);
-        drawingScore.value = Math.round(guessingScores.reduce((p, c) => p + c) / guessingScores.length);
+        drawingScore.value = Math.round(Math.sqrt(guessingScores.reduce((p, c) => p*p + c*c) / guessingScores.length));
+
+        scores.sort((p1, p2) => p2.value - p1.value);
 
         this.setInnerState({ scores });
+    }
+
+    apply() {
+        var users = this.state.users;
+        for (var user of users) {
+            var userScore = this.innerState.scores.find(u => u.id == user.id);
+            user.score += userScore.value;
+        }
+        return users;
     }
 
     render() {

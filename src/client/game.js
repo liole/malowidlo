@@ -9,7 +9,7 @@ import { Timer } from './components/timer.js';
 import { Score } from './components/score.js';
 
 const closeThreshold = 0.3;
-const scoreVisibilityTimeout = 4000;
+const scoreVisibilityTimeout = 3000;
 
 export class Game {
 
@@ -130,6 +130,7 @@ export class Game {
     }
 
     nextRound() {
+        this.state.users = this.score.apply();
         this.resetCurrentState();
         this.sync();
     }
@@ -167,7 +168,7 @@ export class Game {
 
         if (this.isTurnFinished()) {
             this.timer.stop();
-            this.score.calculateScore();
+            this.score.calculate();
             setTimeout(() => this.nextRound(), scoreVisibilityTimeout);
         } else if (this.state.current.drawing && this.state.current.word) {
             this.timer.start();
