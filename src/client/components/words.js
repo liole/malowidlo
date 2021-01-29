@@ -5,30 +5,30 @@ export class Words {
     constructor(settings, handle) {
         this.settings = settings;
         this.handle = handle;
-        this.state = {
+        this.innerState = {
             choices: []
         };
         this.modified = false;
     }
     
-    setState(state) {
-        Object.assign(this.state, state);
+    setInnerState(state) {
+        Object.assign(this.innerState, state);
         this.modified = true;
     }
 
     generateWords() {
-        if (this.state.choices.length) return;
+        if (this.innerState.choices.length) return;
 
         var words = [...this.settings.words];
         var choices = Array.from({ length: this.settings.numberOfChoices },
             (_, i) => ~~(Math.random() * (this.settings.words.length - i)))
             .map(i => words.splice(i, 1)[0]);
-        this.setState({ choices });
+        this.setInnerState({ choices });
     }
 
     onChoice(word) {
         return e => {
-            this.setState({ choices: [] });
+            this.setInnerState({ choices: [] });
             this.handle({
                 type: 'word',
                 value: word
@@ -45,7 +45,7 @@ export class Words {
         $root.clear();
         this.$words = [];
         
-        for (var word of this.state.choices) {
+        for (var word of this.innerState.choices) {
             var $word = dom.new('button', { innerText: word });
             $word.on('click', this.onChoice(word));
             $root.append($word);

@@ -112,7 +112,8 @@ html, body {
 }
 
 #user-name-box.hide,
-#waiting-start-box.hide {
+#waiting-start-box.hide,
+#turn-score-box.hide {
     top: 0%;
 }
 
@@ -329,7 +330,7 @@ html, body {
     text-shadow: 0px 0px 5px #fff, 1px 1px 5px #fff, -1px -1px 5px #fff, 1px -1px 5px #fff, -1px 1px 5px #fff;
 }
 
-#timer::before {
+#timer:not(:empty)::before {
     content: '\f2f2';
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
@@ -361,4 +362,30 @@ html, body {
 
 #timer.danger {
     color: #f66;
+}
+
+#turnScoreList {
+    display: table;
+}
+
+.score-row {
+    display: table-row;
+}
+
+.score-name {
+    display: table-cell;
+    text-align: right;
+    padding: 5px 15px;
+}
+.score-value {
+    display: table-cell;
+    padding: 5px;
+}
+
+.score-row.success .score-value {
+    color: #4f4;
+}
+
+.score-row.success .score-value::before {
+    content: '+';
 }

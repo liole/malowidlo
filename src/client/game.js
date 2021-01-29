@@ -1,13 +1,15 @@
 import dom from './dom.js';
+import { levDist } from './utils.js';
 import { Canvas } from './components/canvas.js';
 import { Players } from './components/players.js';
 import { Words } from './components/words.js';
 import { Word } from './components/word.js';
 import { Chat } from './components/chat.js';
-import { levDist } from './utils.js';
 import { Timer } from './components/timer.js';
+import { Score } from './components/score.js';
 
 const closeThreshold = 0.3;
+const scoreVisibilityTimeout = 4000;
 
 export class Game {
 
@@ -39,6 +41,7 @@ export class Game {
         this.word = new Word(this.state.current, this.userID);
         this.chat = new Chat(this.state, this.userID);
         this.timer = new Timer(this.state.current, this.state.settings, () => this.tick());
+        this.score = new Score(this.state);
     }
 
     handle(event) {
@@ -104,7 +107,8 @@ export class Game {
         if (testing == expecting) {
             result = 'guessed';
             this.state.current.guessed.push({
-                id: userID
+                id: userID,
+                timestamp: this.state.current.elapsed
             });
         } else if (levDist(testing, expecting) / expecting.length < closeThreshold) {
             result = 'close-guess';
@@ -118,6 +122,11 @@ export class Game {
 
     tick() {
         this.state.current.elapsed++;
+        this.sync();
+    }
+
+    nextRound() {
+        this.resetCurrentState();
         this.sync();
     }
 
@@ -140,24 +149,25 @@ export class Game {
             this.timer.settings = this.state.settings;
         }
 
-        if (this.state.current.elapsed >= this.state.settings.turnDuration) {
-            this.timer.stop();
-            // TODO: show score
-            this.resetCurrentState();
-        } else if (this.state.current.drawing && this.state.current.word) {
-            this.timer.start();
-        }
-
-        // TODO: move to inner state of 'words'
-        if (this.state.current.drawing == this.userID) {
-            this.words.generateWords();
-        }
-
         this.canvas.setState(this.state.canvas);
         this.players.setState(this.state);
         this.word.setState(this.state.current);
         this.chat.setState(this.state);
         this.timer.setState(this.state.current);
+        this.score.setState(this.state);
+
+        if (this.state.current.elapsed >= this.state.settings.turnDuration) {
+            this.timer.stop();
+            this.score.calculateScore();
+            setTimeout(() => this.nextRound(), scoreVisibilityTimeout);
+        } else if (this.state.current.drawing && this.state.current.word) {
+            this.timer.start();
+        }
+
+        if (this.state.current.drawing == this.userID) {
+            this.words.generateWords();
+        }
+
         this.queueRender();
     }
 
@@ -174,16 +184,22 @@ export class Game {
     }
 
     render() {
+        var waitingForStart = !this.state.current.drawing;
         var waitingForOther = this.state.current.drawing && this.state.current.drawing != this.userID && !this.state.current.word;
         var waitingForSelf = this.state.current.drawing && this.state.current.drawing == this.userID && !this.state.current.word;
+        var turnScoreVisible = this.state.current.elapsed >= this.state.settings.turnDuration;
 
+        if (waitingForStart) {
+            dom('#startGame').disabled = this.state.users.length < 2 ? 'disabled' : '';
+        }
         if (waitingForOther) {
             dom('#waitingForName').innerText = (this.state.users.find(u => u.id == this.state.current.drawing) || {}).name;
         }
 
-        this.renderBoxState('waiting-start', !this.state.current.drawing);
+        this.renderBoxState('waiting-start', waitingForStart);
         this.renderBoxState('waiting-choice', waitingForOther);
         this.renderBoxState('words-choice', waitingForSelf);
+        this.renderBoxState('turn-score', turnScoreVisible);
 
         this.canvas.render();
         this.players.render();
@@ -191,6 +207,7 @@ export class Game {
         this.word.render();
         this.chat.render();
         this.timer.render();
+        this.score.render();
     }
 
 }
