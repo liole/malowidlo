@@ -61,7 +61,7 @@ export class Score {
 
         var guessingScores = scores.filter(s => s.id != this.state.current.drawing).map(s => s.value);
         var drawingScore = scores.find(s => s.id == this.state.current.drawing);
-        drawingScore.value = Math.round(Math.sqrt(guessingScores.reduce((p, c) => p*p + c*c) / guessingScores.length));
+        drawingScore.value = Math.round(Math.sqrt(guessingScores.map(s => s*s).reduce((p, c) => p + c) / guessingScores.length));
 
         scores.sort((p1, p2) => p2.value - p1.value);
 

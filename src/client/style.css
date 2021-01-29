@@ -75,6 +75,11 @@ html, body {
     cursor: pointer;
 }
 
+.box button[disabled] {
+    color: #aaa;
+    background-color: #669;
+}
+
 .box textarea {
     scrollbar-color: #888 transparent;
     scrollbar-width: thin;

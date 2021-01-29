@@ -140,8 +140,9 @@ export class Game {
     }
 
     isTurnFinished() {
-        return this.state.current.elapsed >= this.state.settings.turnDuration ||
-            this.state.current.guessed.length == this.state.users.length - 1;
+        return this.state.current.drawing &&
+            (this.state.current.elapsed >= this.state.settings.turnDuration ||
+            this.state.current.guessed.length == this.state.users.length - 1);
     }
 
     addUser(user) {

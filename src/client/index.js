@@ -8,7 +8,7 @@ var userID = localStorage.userID || (localStorage.userID = Math.random().toStrin
 var userName = localStorage.userName;
 var isDown = false;
 
-document.addEventListener("DOMContentLoaded", e => { 
+dom().on("DOMContentLoaded", e => { 
     if (!userName) {
         dom('#userName').focus();
     }
