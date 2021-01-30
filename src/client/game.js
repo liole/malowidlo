@@ -146,14 +146,15 @@ export class Game {
         this.sync();
     }
 
-    nextRound() {
+    nextTurn() {
+        this.nextTurnTimer = undefined;
         this.state.users = this.score.apply();
         this.resetCurrentState();
         this.sync();
     }
 
     canDraw(userID = this.userID) {
-        return (userID == this.state.current.drawing) && this.state.current.word;
+        return (userID == this.state.current.drawing) && this.state.current.word && !this.isTurnFinished();
     }
 
     isTurnFinished() {
@@ -189,7 +190,9 @@ export class Game {
         if (this.isTurnFinished()) {
             this.timer.stop();
             this.score.calculate();
-            setTimeout(() => this.nextRound(), scoreVisibilityTimeout);
+            if (!this.nextTurnTimer) {
+                this.nextTurnTimer = setTimeout(() => this.nextTurn(), scoreVisibilityTimeout);
+            }
         } else if (this.state.current.drawing && this.state.current.word) {
             this.timer.start();
         }
