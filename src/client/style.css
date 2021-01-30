@@ -414,10 +414,13 @@ html, body {
     position: absolute;
     bottom: 0px;
     right: 0px;
-    margin: 20px 30px;
+    margin: 20px 20px;
     opacity: 1;
     transition: all .5s;
     text-align: right;
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
 }
 
 #toolbox.hide {
@@ -438,18 +441,20 @@ html, body {
     width: 24px;
     height: 24px;
     margin: 3px;
-    border: solid 1px #000; 
+    border: solid 1px #000;
     cursor: pointer;
+    pointer-events: all;
+    touch-action: auto;
 }
 
 .color-option[style=''] {
     background: linear-gradient(to top left,
-             #0000 0%,
-             #0000 calc(50% - 2px),
-             #f00f calc(50% - 2px),
-             #f00f calc(50% + 2px),
-             #0000 calc(50% + 2px),
-             #0000 100%);
+        #0000 0%,
+        #0000 calc(50% - 2px),
+        #f00f calc(50% - 2px),
+        #f00f calc(50% + 2px),
+        #0000 calc(50% + 2px),
+        #0000 100%);
 }
 
 .color-option.selected {
@@ -461,11 +466,29 @@ html, body {
     margin: 3px;
     padding: 6px;
     font-size: 30px;
+    opacity: 0.75;
     cursor: pointer;
+    pointer-events: all;
+    touch-action: auto;
+}
+
+#clear:hover {
+    opacity: 1;
 }
 
 #clear::before {
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     content: '\f2ed';
+}
+
+
+#thickness {
+    display: block;
+    width: 100%;
+    margin: 5px 0px 15px;
+    filter: hue-rotate(35deg);
+    outline: none;
+    pointer-events: all;
+    touch-action: auto;
 }

@@ -8,6 +8,7 @@ import { Chat } from './components/chat.js';
 import { Timer } from './components/timer.js';
 import { Score } from './components/score.js';
 import { Colors } from './components/colors.js';
+import { Thickness } from './components/thickness.js';
 
 const closeThreshold = 0.3;
 const scoreVisibilityTimeout = 3000;
@@ -34,7 +35,8 @@ export class Game {
                 guessed: [],
                 word: null,
                 elapsed: 0,
-                color: '#000000'
+                color: '#000000',
+                thickness: 0.5
             },
         };
         this.canvas = new Canvas(this.state.canvas);
@@ -45,6 +47,7 @@ export class Game {
         this.timer = new Timer(this.state.current, this.state.settings, () => this.tick());
         this.score = new Score(this.state);
         this.colors = new Colors(this.state.current, e => this.handle(e));
+        this.thickness = new Thickness(this.state.current, e => this.handle(e));
     }
 
     handle(event) {
@@ -64,12 +67,15 @@ export class Game {
             case 'color':
                 this.state.current.color = event.value;
                 break;
+            case 'thickness':
+                this.state.current.thickness = event.value;
+                break;
             case 'draw-start':
                 if (!this.canDraw(userID)) return;
                 var obj = {
                     type: 'line',
                     color: this.state.current.color,
-                    width: 0.5,
+                    width: this.state.current.thickness,
                     points: [ event.point ]
                 };
                 this.state.canvas.objects.push(obj);
@@ -104,7 +110,8 @@ export class Game {
             guessed: [],
             word: null,
             elapsed: 0,
-            color: '#000000'
+            color: '#000000',
+            thickness: 0.5
         };
 
         this.state.canvas = {
@@ -177,6 +184,7 @@ export class Game {
         this.timer.setState(this.state.current);
         this.score.setState(this.state);
         this.colors.setState(this.state.current);
+        this.thickness.setState(this.state.current);
 
         if (this.isTurnFinished()) {
             this.timer.stop();
@@ -231,6 +239,7 @@ export class Game {
         this.timer.render();
         this.score.render();
         this.colors.render();
+        this.thickness.render();
     }
 
 }
