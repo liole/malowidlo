@@ -1,6 +1,6 @@
 var extensions = {
-    on(event, callback) {
-        this.addEventListener(event, callback);
+    on(event, callback, options) {
+        this.addEventListener(event, callback, options);
     },
     get(name) {
         this.getAttribute(name);

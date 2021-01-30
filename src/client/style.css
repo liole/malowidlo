@@ -7,7 +7,7 @@ html, body {
     font-family: Helvetica, sans-serif;
     overflow: hidden;
     background-size: 40px 40px;
-    background-image: radial-gradient(circle, #8888 1px, transparent 1px);
+    background-image: radial-gradient(circle, #8888 1px, transparent 2px);
 }
 
 * {
@@ -78,6 +78,7 @@ html, body {
 .box button[disabled] {
     color: #aaa;
     background-color: #669;
+    cursor: default;
 }
 
 .box textarea {
@@ -342,6 +343,9 @@ html, body {
     left: 0px;
     font-weight: bold;
     text-shadow: 0px 0px 5px #fff, 1px 1px 5px #fff, -1px -1px 5px #fff, 1px -1px 5px #fff, -1px 1px 5px #fff;
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
 }
 
 #timer:not(:empty)::before {
@@ -356,7 +360,7 @@ html, body {
     display: block;
     top: 0px;
     left: 0px;
-    width: 100%;
+    width: 1000%;
     height: 5px;
     background-color: #66f;
     transition: all linear 1s;
@@ -402,4 +406,44 @@ html, body {
 
 .score-row.success .score-value::before {
     content: '+';
+}
+
+#colors {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    bottom: 0px;
+    right: 0px;
+    height: 90px;
+    width: 210px;
+    margin: 20px 30px;
+    transition: all .5s;
+}
+
+#colors.hide {
+    right: -270px;
+}
+
+.color-option {
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin: 3px;
+    border: solid 1px #000; 
+    cursor: pointer;
+}
+
+.color-option[style=''] {
+    background: linear-gradient(to top left,
+             #0000 0%,
+             #0000 calc(50% - 2px),
+             #f00f calc(50% - 2px),
+             #f00f calc(50% + 2px),
+             #0000 calc(50% + 2px),
+             #0000 100%);
+}
+
+.color-option.selected {
+    box-shadow: 0 0 0 3px #88f;
 }

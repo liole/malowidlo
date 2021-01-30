@@ -8,9 +8,10 @@ var userID = localStorage.userID || (localStorage.userID = Math.random().toStrin
 var userName = localStorage.userName;
 var isDown = false;
 
-dom().on("DOMContentLoaded", e => { 
-    if (!userName) {
-        dom('#userName').focus();
+window.addEventListener('hashchange', () => {
+    var newGameID = location.hash.substr(1);
+    if (gameID != newGameID) {
+        location.reload();
     }
 });
 
@@ -59,14 +60,14 @@ dom().on('keyup', e => {
 
 dom('#startGame').on('click', startGame);
 
-dom('#surface').on('mousedown', handleDown);
-dom('#surface').on('touchstart', handleDown);
+dom('#surface').on('mousedown', handleDown, { passive: false });
+dom('#surface').on('touchstart', handleDown, { passive: false });
 
-dom().on('mouseup', handleUp);
-dom().on('touchend', handleUp);
+dom().on('mouseup', handleUp, { passive: false });
+dom().on('touchend', handleUp, { passive: false });
 
-dom().on('mousemove', handleMove);
-dom().on('touchmove', handleMove);
+dom().on('mousemove', handleMove, { passive: false });
+dom().on('touchmove', handleMove, { passive: false });
 
 socket.on('event', event => {
     game.handle(event);
@@ -88,8 +89,8 @@ socket.on('new-player', player => {
 function getPoint(e) {
     var rect = dom('#canvas').getBoundingClientRect();
     return {
-        x: 100 * ((e.touches ? e.touches[0].clientX : e.clientX) - rect.x) / rect.width,
-        y: 50 * ((e.touches ? e.touches[0].clientY : e.clientY) - rect.y) / rect.height
+        x: +(100 * ((e.touches ? e.touches[0].clientX : e.clientX) - rect.x) / rect.width).toFixed(2),
+        y: +(50 * ((e.touches ? e.touches[0].clientY : e.clientY) - rect.y) / rect.height).toFixed(2)
     };
 }
 
@@ -157,6 +158,12 @@ function joinGame() {
         if (!error) {
             initGame();
             socket.emit('request-sync', { id: gameID });
+            setTimeout(() => {
+                // if no state received in 1 second, reset the game (no active players)
+                if (!game.state.settings.words.length) {
+                    location.hash = '';
+                }
+            }, 1000);
         } else {
             alert(error);
         }

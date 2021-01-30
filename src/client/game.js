@@ -7,6 +7,7 @@ import { Word } from './components/word.js';
 import { Chat } from './components/chat.js';
 import { Timer } from './components/timer.js';
 import { Score } from './components/score.js';
+import { Colors } from './components/colors.js';
 
 const closeThreshold = 0.3;
 const scoreVisibilityTimeout = 3000;
@@ -32,7 +33,8 @@ export class Game {
                 drawing: null,
                 guessed: [],
                 word: null,
-                elapsed: 0
+                elapsed: 0,
+                color: '#000000'
             },
         };
         this.canvas = new Canvas(this.state.canvas);
@@ -42,6 +44,7 @@ export class Game {
         this.chat = new Chat(this.state, this.userID);
         this.timer = new Timer(this.state.current, this.state.settings, () => this.tick());
         this.score = new Score(this.state);
+        this.colors = new Colors(this.state.current, e => this.handle(e));
     }
 
     handle(event) {
@@ -58,11 +61,14 @@ export class Game {
                 var result = this.processGuess(event.value, userID);
                 this.registerMessage(result, userID, event.value);
                 break;
+            case 'color':
+                this.state.current.color = event.value;
+                break;
             case 'draw-start':
                 if (!this.canDraw(userID)) return;
                 var obj = {
                     type: 'line',
-                    color: '#000',
+                    color: this.state.current.color,
                     width: 0.5,
                     points: [ event.point ]
                 };
@@ -94,7 +100,8 @@ export class Game {
             drawing: this.state.users[index].id,
             guessed: [],
             word: null,
-            elapsed: 0
+            elapsed: 0,
+            color: '#000000'
         };
 
         this.state.canvas = {
@@ -166,6 +173,7 @@ export class Game {
         this.chat.setState(this.state);
         this.timer.setState(this.state.current);
         this.score.setState(this.state);
+        this.colors.setState(this.state.current);
 
         if (this.isTurnFinished()) {
             this.timer.stop();
@@ -191,7 +199,7 @@ export class Game {
     }
 
     renderBoxState(box, state) {
-        dom(`#${box}-box`).classList[ state ? 'remove' : 'add' ]('hide');
+        dom(box.startsWith('#') ? box : `#${box}-box`).classList[ state ? 'remove' : 'add' ]('hide');
     }
 
     render() {
@@ -210,6 +218,7 @@ export class Game {
         this.renderBoxState('waiting-choice', waitingForOther);
         this.renderBoxState('words-choice', waitingForSelf);
         this.renderBoxState('turn-score', this.isTurnFinished());
+        this.renderBoxState('#colors', this.canDraw());
 
         this.canvas.render();
         this.players.render();
@@ -218,6 +227,7 @@ export class Game {
         this.chat.render();
         this.timer.render();
         this.score.render();
+        this.colors.render();
     }
 
 }
