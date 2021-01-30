@@ -19,10 +19,10 @@ io.on('connection', (socket) => {
         console.log(`User ${data.id}[${data.name}] is connected. (ID=${socket.id})`);
 
         // restore broken connection
-        var gameID = storage.findGame(game => game.players.includes(data.id));
-        if (gameID) {
-            socket.join(gameID);
-        }
+        // var gameID = storage.findGame(game => game.players.includes(data.id));
+        // if (gameID) {
+        //     socket.join(gameID);
+        // }
     });
 
     socket.on('create', (data, callback) => {
