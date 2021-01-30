@@ -32,11 +32,12 @@ dom('#userName').on('keyup', e => {
     }
 });
 
-dom('#createGame').on('click', e => {
+dom('#createGame').on('click', async e => {
     createGame({
         turnDuration: +dom('#turnDuration').value,
         numberOfChoices: +dom('#numberOfChoices').value,
-        words: dom('#wordsList').value.split(',').map(w => w.trim()).filter(w => w),
+        words: (dom('#wordsList').value || await (await fetch('words.txt')).text())
+            .split(',').map(w => w.trim()).filter(w => w),
     });
 });
 
