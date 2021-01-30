@@ -58,6 +58,12 @@ dom().on('keyup', e => {
     }
 });
 
+dom('#clear').on('click', e => {
+    if (game) {
+        game.handle({ type: 'clear' });
+    }
+});
+
 dom('#startGame').on('click', startGame);
 
 dom('#surface').on('mousedown', handleDown, { passive: false });

@@ -410,23 +410,27 @@ html, body {
     content: '+';
 }
 
-#colors {
+#toolbox {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
     bottom: 0px;
     right: 0px;
-    height: 90px;
-    width: 210px;
     margin: 20px 30px;
     opacity: 1;
     transition: all .5s;
+    text-align: right;
 }
 
-#colors.hide {
+#toolbox.hide {
     right: -270px;
     opacity: 0;
+}
+
+#colors {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 90px;
+    width: 210px;
 }
 
 .color-option {
@@ -450,4 +454,18 @@ html, body {
 
 .color-option.selected {
     box-shadow: 0 0 0 3px #88f;
+}
+
+#clear {
+    display: inline-block;
+    margin: 3px;
+    padding: 6px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+#clear::before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    content: '\f2ed';
 }

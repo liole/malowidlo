@@ -83,6 +83,9 @@ export class Game {
                 if (!this.canDraw(userID)) return;
                 this.state.canvas.objects.pop(); 
                 break;
+            case 'clear':
+                this.state.canvas.objects = [];
+                break;
             default:
                 return;
         }
@@ -218,7 +221,7 @@ export class Game {
         this.renderBoxState('waiting-choice', waitingForOther);
         this.renderBoxState('words-choice', waitingForSelf);
         this.renderBoxState('turn-score', this.isTurnFinished());
-        this.renderBoxState('#colors', this.canDraw());
+        this.renderBoxState('#toolbox', this.canDraw());
 
         this.canvas.render();
         this.players.render();
