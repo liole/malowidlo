@@ -95,8 +95,6 @@ export class Results {
                 ]);
                 $root.append($score);
             }
-
-            dom('#wordReveal').innerText = this.state.current.word;
         }
 
         this.modified = false;

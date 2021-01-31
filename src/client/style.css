@@ -436,12 +436,6 @@ html, body {
     content: '+';
 }
 
-#wordReveal {
-    margin-bottom: 20px;
-    color: #bbf;
-    font-family: Consolas, monospace;
-}
-
 #toolbox {
     position: absolute;
     bottom: 0px;

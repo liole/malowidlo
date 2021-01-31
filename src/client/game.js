@@ -45,7 +45,7 @@ export class Game {
         this.canvas = new Canvas(this.state.canvas);
         this.players = new Players(this.state);
         this.words = new Words(this.state.settings, e => this.handle(e));
-        this.word = new Word(this.state.current, this.userID);
+        this.word = new Word(this.state, this.userID);
         this.chat = new Chat(this.state, this.userID);
         this.timer = new Timer(this.state.current, this.state.settings, () => this.tick());
         this.results = new Results(this.state);
@@ -204,7 +204,7 @@ export class Game {
 
         this.canvas.setState(this.state.canvas);
         this.players.setState(this.state);
-        this.word.setState(this.state.current);
+        this.word.setState(this.state);
         this.chat.setState(this.state);
         this.timer.setState(this.state.current);
         this.results.setState(this.state);
