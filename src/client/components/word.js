@@ -6,7 +6,8 @@ export class Word {
     constructor(state, userID) {
         this.userID = userID;
         this.state = {
-            word: null
+            word: null,
+            letters: [],
         };
         this.setState(state);
     }
@@ -22,7 +23,8 @@ export class Word {
         }
 
         if (this.state.word) {
-            var mask = applyMask(this.state.word, '_');
+            var mask = applyMask(this.state.word, (c, i) =>
+                this.state.letters.includes(i) ? c : '_');
             dom('#wordMask').innerText = mask;
         } else {
             dom('#wordMask').innerText = '';

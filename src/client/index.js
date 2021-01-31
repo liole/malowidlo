@@ -53,7 +53,7 @@ dom('#wordInput').on('keyup', e => {
 
 dom().on('keyup', e => {
     if (!game) return;
-    if (e.ctrlKey && e.key== 'z') {
+    if (e.ctrlKey && e.code == 'KeyZ') {
         game.handle({
             type: 'undo'
         });

@@ -11,6 +11,7 @@ import { Colors } from './components/colors.js';
 import { Thickness } from './components/thickness.js';
 
 const closeThreshold = 0.3;
+const relealLettersTarget = 0.3;
 const resultsVisibilityTimeout = 3000;
 
 export class Game {
@@ -20,10 +21,11 @@ export class Game {
         this.pushEvent = event => {};
         this.userID = userID;
         this.state = {
-            settings: gameSettings || {
+            settings: {
                 turnDuration: 80,
                 numberOfChoices: 3,
-                words: []
+                words: [],
+                ...gameSettings
             },
             users: [],
             messages: [],
@@ -34,6 +36,7 @@ export class Game {
                 drawing: null,
                 guessed: [],
                 word: null,
+                letters: [],
                 elapsed: 0,
                 color: '#000000',
                 thickness: 0.5
@@ -58,6 +61,9 @@ export class Game {
                 break;
             case 'word':
                 this.state.current.word = event.value;
+                break;
+            case 'letter':
+                this.state.current.letters.push(event.value);
                 break;
             case 'guess':
                 if (!event.value) return;
@@ -109,6 +115,7 @@ export class Game {
             drawing: this.state.users[index].id,
             guessed: [],
             word: null,
+            letters: [],
             elapsed: 0,
             color: '#000000',
             thickness: 0.5
@@ -143,7 +150,24 @@ export class Game {
 
     tick() {
         this.state.current.elapsed++;
+        this.revealLetters();
         this.sync();
+    }
+
+    revealLetters() {
+        if (!this.canDraw()) return;
+        var progress = this.state.current.elapsed / this.state.settings.turnDuration;
+        var nonLetters = [...this.state.current.word.matchAll(/\P{L}/uig)].map(a=>a.index);
+        var revealCount = Math.floor((this.state.current.word.length - nonLetters.length) * relealLettersTarget * progress);
+        for (var i = this.state.current.letters.length; i < revealCount; ++i) {
+            var notRevealedCount = this.state.current.word.length - this.state.current.letters.length - nonLetters.length;
+            var relativeIndex = ~~(Math.random() * notRevealedCount);
+            var absoluteIndex = [...this.state.current.letters, ...nonLetters].sort().reduce((res, i) => res + (res >= i), relativeIndex);
+            this.handle({
+                type: 'letter',
+                value: absoluteIndex
+            });
+        }
     }
 
     nextTurn() {
