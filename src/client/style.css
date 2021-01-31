@@ -232,6 +232,11 @@ html, body {
     touch-action: none;
 }
 
+#word-container.top {
+    top: 0px;
+    bottom: auto;
+}
+
 #wordMask {
     font-family: Consolas, monospace;
     letter-spacing: 5px;

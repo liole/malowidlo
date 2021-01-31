@@ -52,10 +52,14 @@ dom('#wordInput').on('keyup', e => {
 });
 
 dom().on('keyup', e => {
-    if (e.ctrlKey && e.key== 'z' && game) {
+    if (!game) return;
+    if (e.ctrlKey && e.key== 'z') {
         game.handle({
             type: 'undo'
         });
+    }
+    if (e.altKey && e.key == 'w') {
+        dom('#word-container').classList.toggle('top');
     }
 });
 
