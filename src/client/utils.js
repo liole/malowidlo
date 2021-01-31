@@ -7,8 +7,8 @@ export function randomChar() {
     return String.fromCharCode('a'.charCodeAt(0) + Math.random()*26)
 }
 
-export function findLast(array, predicate) {
-    for (var index = array.length - 1; index >= 0; index--) {
+export function findLast(array, predicate, upTo = array.length - 1) {
+    for (var index = upTo; index >= 0; index--) {
         if (predicate(array[index])) {
             return array[index];
         }

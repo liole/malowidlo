@@ -106,6 +106,12 @@ html, body {
     margin-bottom: 20px;
 }
 
+.box .box-subtitle {
+    font-size: 0.7em;
+    font-family: 'Segoe Script';
+    margin-bottom: 0px;
+}
+
 .box label {
     display: block;
     font-size: .75em;
@@ -329,12 +335,27 @@ html, body {
     font-weight: bold;
 }
 
+.chat-row.word {
+    color: #66d;
+}
+
+.chat-row.word::before {
+    display: table-cell;
+    content: 'Answer';
+    font-family: 'Segoe Script';
+    font-weight: bold;
+}
+
 .chat-row.guessed {
     color: #4a4;
 }
 
 .chat-row.close-guess {
     color: #bb4;
+}
+
+#wordInput.guessed {
+    color: #4a4;
 }
 
 #timer {
@@ -408,6 +429,12 @@ html, body {
 
 .score-row.success .score-value::before {
     content: '+';
+}
+
+#wordReveal {
+    margin-bottom: 20px;
+    color: #bbf;
+    font-family: Consolas, monospace;
 }
 
 #toolbox {

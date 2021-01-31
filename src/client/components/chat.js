@@ -43,13 +43,18 @@ export class Chat {
                         dom.new('div', { className: 'chat-name', innerText: this.users[message.user] })]);
                     $root.append($drawing);
                     break;
+                case 'word':
+                    var $word = dom.new('div', { className: 'chat-row word' }, [
+                        dom.new('div', { className: 'chat-message', innerText: message.value })]);
+                    $root.append($word);
+                    break;
                 case 'guess':
                 case 'close-guess':
                 case 'guessed':
                     var value = message.value;
                     var extraClasses = '';
                     if (message.type != 'guess' && message.user != this.userID) {
-                        var drawing = findLast(this.state.messages, m => m.type == 'break');
+                        var drawing = findLast(this.state.messages, m => m.type == 'break', i);
                         if (!drawing || drawing.user != this.userID) {
                             value = applyMask(value, () => randomChar());
                             extraClasses += ' blur';

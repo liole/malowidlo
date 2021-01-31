@@ -1,6 +1,6 @@
 import dom from '../dom.js';
 
-export class Score {
+export class Results {
 
     constructor(state) {
         this.state = {
@@ -9,7 +9,8 @@ export class Score {
                 turnDuration: 80
             },
             current: {
-                guessed: []
+                guessed: [],
+                word: ''
             }
         };
         this.innerState = {
@@ -74,6 +75,7 @@ export class Score {
             var userScore = this.innerState.scores.find(u => u.id == user.id);
             user.score += userScore.value;
         }
+        this.setInnerState({ scores: [] });
         return users;
     }
 
@@ -82,15 +84,19 @@ export class Score {
             return;
         }
 
-        var $root = dom('#turnScoreList');
-        $root.clear();
-        
-        for (var score of this.innerState.scores) {
-            var $score = dom.new('div', { className: `score-row ${score.value > 0 ? 'success' : ''}` }, [
-                dom.new('div', { className: 'score-name', innerText: this.users[score.id] }),
-                dom.new('div', { className: 'score-value', innerText: score.value }),
-            ]);
-            $root.append($score);
+        if (this.innerState.scores.length) {
+            var $root = dom('#turnScoreList');
+            $root.clear();
+            
+            for (var score of this.innerState.scores) {
+                var $score = dom.new('div', { className: `score-row ${score.value > 0 ? 'success' : ''}` }, [
+                    dom.new('div', { className: 'score-name', innerText: this.users[score.id] }),
+                    dom.new('div', { className: 'score-value', innerText: score.value }),
+                ]);
+                $root.append($score);
+            }
+
+            dom('#wordReveal').innerText = this.state.current.word;
         }
 
         this.modified = false;

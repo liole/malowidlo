@@ -6,12 +6,12 @@ import { Words } from './components/words.js';
 import { Word } from './components/word.js';
 import { Chat } from './components/chat.js';
 import { Timer } from './components/timer.js';
-import { Score } from './components/score.js';
+import { Results } from './components/results.js';
 import { Colors } from './components/colors.js';
 import { Thickness } from './components/thickness.js';
 
 const closeThreshold = 0.3;
-const scoreVisibilityTimeout = 3000;
+const resultsVisibilityTimeout = 3000;
 
 export class Game {
 
@@ -45,7 +45,7 @@ export class Game {
         this.word = new Word(this.state.current, this.userID);
         this.chat = new Chat(this.state, this.userID);
         this.timer = new Timer(this.state.current, this.state.settings, () => this.tick());
-        this.score = new Score(this.state);
+        this.results = new Results(this.state);
         this.colors = new Colors(this.state.current, e => this.handle(e));
         this.thickness = new Thickness(this.state.current, e => this.handle(e));
     }
@@ -148,7 +148,7 @@ export class Game {
 
     nextTurn() {
         this.nextTurnTimer = undefined;
-        this.state.users = this.score.apply();
+        this.state.users = this.results.apply();
         this.resetCurrentState();
         this.sync();
     }
@@ -183,15 +183,16 @@ export class Game {
         this.word.setState(this.state.current);
         this.chat.setState(this.state);
         this.timer.setState(this.state.current);
-        this.score.setState(this.state);
+        this.results.setState(this.state);
         this.colors.setState(this.state.current);
         this.thickness.setState(this.state.current);
 
         if (this.isTurnFinished()) {
             this.timer.stop();
-            this.score.calculate();
+            this.results.calculate();
+            this.registerMessage('word', undefined, this.state.current.word);
             if (!this.nextTurnTimer) {
-                this.nextTurnTimer = setTimeout(() => this.nextTurn(), scoreVisibilityTimeout);
+                this.nextTurnTimer = setTimeout(() => this.nextTurn(), resultsVisibilityTimeout);
             }
         } else if (this.state.current.drawing && this.state.current.word) {
             this.timer.start();
@@ -231,7 +232,7 @@ export class Game {
         this.renderBoxState('waiting-start', waitingForStart);
         this.renderBoxState('waiting-choice', waitingForOther);
         this.renderBoxState('words-choice', waitingForSelf);
-        this.renderBoxState('turn-score', this.isTurnFinished());
+        this.renderBoxState('results', this.isTurnFinished());
         this.renderBoxState('#toolbox', this.canDraw());
 
         this.canvas.render();
@@ -240,7 +241,7 @@ export class Game {
         this.word.render();
         this.chat.render();
         this.timer.render();
-        this.score.render();
+        this.results.render();
         this.colors.render();
         this.thickness.render();
     }
