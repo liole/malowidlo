@@ -1,5 +1,6 @@
 import dom from './dom.js';
 import { Game } from './game.js';
+import { addVectors, getTransformObject, getVector, multVector } from './utils.js';
 
 var socket = io();
 var game = undefined;
@@ -7,6 +8,8 @@ var gameID = location.hash.substr(1);
 var userID = localStorage.userID || (localStorage.userID = Math.random().toString(36).substr(2));
 var userName = localStorage.userName;
 var isDown = false;
+var transformOrigin = undefined;
+var scaleCurrent = undefined;
 
 window.addEventListener('hashchange', () => {
     var newGameID = location.hash.substr(1);
@@ -58,8 +61,16 @@ dom().on('keyup', e => {
             type: 'undo'
         });
     }
-    if (e.altKey && e.key == 'w') {
+    if (e.altKey && e.code == 'KeyW') {
         dom('#word-container').classList.toggle('top');
+    }
+    if (e.key == 'Alt' && (transformOrigin || scaleCurrent)) {
+        game.handle({
+            type: 'transform-apply'
+        });
+        transformOrigin = undefined;
+        scaleCurrent = undefined;
+        isDown = false;
     }
 });
 
@@ -80,6 +91,8 @@ dom().on('touchend', handleUp, { passive: false });
 dom().on('mousemove', handleMove, { passive: false });
 dom().on('touchmove', handleMove, { passive: false });
 
+dom().on('wheel', handleScroll);
+
 socket.on('event', event => {
     game.handle(event);
 });
@@ -97,12 +110,41 @@ socket.on('new-player', player => {
 });
 
 
-function getPoint(e) {
+function getPoint(e, touchIndex = 0) {
+    if (e.touches && e.touches.length <= touchIndex) {
+        touchIndex = 0;
+    }
     var rect = dom('#canvas').getBoundingClientRect();
     return {
-        x: +(100 * ((e.touches ? e.touches[0].clientX : e.clientX) - rect.x) / rect.width).toFixed(2),
-        y: +(50 * ((e.touches ? e.touches[0].clientY : e.clientY) - rect.y) / rect.height).toFixed(2)
+        x: +(100 * ((e.touches ? e.touches[touchIndex].clientX : (e.clientX + touchIndex*100)) - rect.x) / rect.width).toFixed(2),
+        y: +(50 * ((e.touches ? e.touches[touchIndex].clientY : (e.clientY + touchIndex*100)) - rect.y) / rect.height).toFixed(2)
     };
+}
+
+function getTransform(e) {
+    var transformCurrent = [getPoint(e, 0), getPoint(e, 1)];
+    var localOrigin = [...(transformOrigin || transformCurrent)];
+    if (scaleCurrent) {
+        localOrigin[1] = addVectors(localOrigin[0], multVector(getVector(...localOrigin), scaleCurrent));
+    }
+    return getTransformObject(localOrigin, transformCurrent);
+}
+
+function handleScroll(e) {
+    if (!game || !e.altKey || e.deltaMode) return;
+    if (!scaleCurrent) {
+        scaleCurrent = 1
+    }
+
+    const scaleCoef = 1.1;
+    var absoluteScroll = e.deltaY / window.devicePixelRatio / 100;
+    var currentScroll = Math.log(scaleCurrent) / Math.log(scaleCoef);
+    scaleCurrent = Math.pow(scaleCoef, currentScroll + absoluteScroll);
+
+    game.handle({
+        type: 'transform-preview',
+        value: getTransform(e)
+    });
 }
 
 function handleDown(e) {
@@ -112,6 +154,8 @@ function handleDown(e) {
             type: 'draw-start',
             point: getPoint(e)
         });
+        transformOrigin = undefined;
+        scaleCurrent = undefined;
         e.stopPropagation();
         e.preventDefault();
     }
@@ -120,9 +164,17 @@ function handleDown(e) {
 function handleUp(e) {
     if (game && isDown) {
         isDown = false;
-        game.handle({
-            type: 'draw-stop'
-        });
+        if (transformOrigin) {
+            game.handle({
+                type: 'transform-apply'
+            });
+            transformOrigin = undefined;
+            scaleCurrent = undefined;
+        } else {
+            game.handle({
+                type: 'draw-stop'
+            });
+        }
         e.stopPropagation();
         e.preventDefault();
     }
@@ -133,10 +185,22 @@ function handleUp(e) {
 
 function handleMove(e) {
     if (game && isDown) {
-        game.handle({
-            type: 'draw-move',
-            point: getPoint(e)
-        });
+        if (transformOrigin) {
+            game.handle({
+                type: 'transform-preview',
+                value: getTransform(e)
+            });
+        } else if (e.touches && e.touches.length > 1 || e.altKey) {
+            transformOrigin = [getPoint(e, 0), getPoint(e, 1)];
+            game.handle({
+                type: 'undo'
+            });
+        } else {
+            game.handle({
+                type: 'draw-move',
+                point: getPoint(e)
+            });
+        }
         e.stopPropagation();
         e.preventDefault();
     }

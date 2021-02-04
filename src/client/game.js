@@ -30,7 +30,8 @@ export class Game {
             users: [],
             messages: [],
             canvas: {
-                objects: []
+                objects: [],
+                transform: undefined
             },
             current: {
                 drawing: null,
@@ -78,6 +79,7 @@ export class Game {
                 break;
             case 'draw-start':
                 if (!this.canDraw(userID)) return;
+                this.ensureTransformFinished();
                 var obj = {
                     type: 'line',
                     color: this.state.current.color,
@@ -88,8 +90,17 @@ export class Game {
                 break;
             case 'draw-move':
                 if (!this.canDraw(userID)) return;
+                this.ensureTransformFinished();
                 var lastIndex = this.state.canvas.objects.length - 1;
                 this.state.canvas.objects[lastIndex].points.push(event.point);
+                break;
+            case 'transform-preview':
+                if (!this.canDraw(userID)) return;
+                this.state.canvas.transform = event.value;
+                break;
+            case 'transform-apply':
+                if (!this.canDraw(userID)) return;
+                this.state.canvas = this.canvas.persistTransform();
                 break;
             case 'undo':
                 if (!this.canDraw(userID)) return;
@@ -122,7 +133,8 @@ export class Game {
         };
 
         this.state.canvas = {
-            objects: []
+            objects: [],
+            transform: undefined
         };
         
         this.registerMessage('break', this.state.current.drawing);
@@ -175,6 +187,12 @@ export class Game {
         this.state.users = this.results.apply();
         this.resetCurrentState();
         this.sync();
+    }
+
+    ensureTransformFinished() {
+        if (this.state.canvas.transform) {
+            this.canvas.persistTransform();
+        }
     }
 
     canDraw(userID = this.userID) {

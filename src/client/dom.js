@@ -41,9 +41,12 @@ dom.new = function newElement(tag, options = {}, children = []) {
     return element;
 }
 
-dom.svg = function newSvgElement(tag, options = {}) {
+dom.svg = function newSvgElement(tag, options = {}, children = []) {
     let element = document.createElementNS('http://www.w3.org/2000/svg', tag);
     Object.assign(element, options, extensions);
+    for (let child of children) {
+        element.append(child);
+    }
     return element;
 }
 

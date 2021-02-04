@@ -5,13 +5,25 @@ export class Canvas {
     constructor(state) {
         this.objects = [];
         this.state = {
-            objects: []
+            objects: [],
+            transform: undefined
         };
         this.setState(state);
     }
 
     setState(state) {
         Object.assign(this.state, state);
+        if (this.state.transform) {
+            this.objects.forEach(o => o.setTransform(this.state.transform));
+        }
+    }
+
+    persistTransform() {
+        this.setState({
+            objects: this.objects.map(o => o.persistTransform()),
+            transform: undefined
+        });
+        return this.state;
     }
 
     createObject(state) {
