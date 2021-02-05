@@ -9,6 +9,7 @@ import { Timer } from './components/timer.js';
 import { Results } from './components/results.js';
 import { Colors } from './components/colors.js';
 import { Thickness } from './components/thickness.js';
+import { Sound } from './components/sound.js';
 
 const closeThreshold = 0.3;
 const relealLettersTarget = 0.3;
@@ -51,6 +52,7 @@ export class Game {
         this.results = new Results(this.state);
         this.colors = new Colors(this.state.current, e => this.handle(e));
         this.thickness = new Thickness(this.state.current, e => this.handle(e));
+        this.audio = new Sound();
     }
 
     handle(event) {
@@ -61,6 +63,7 @@ export class Game {
                 break;
             case 'word':
                 this.state.current.word = event.value;
+                this.audio.start();
                 break;
             case 'letter':
                 this.state.current.letters.push(event.value);
@@ -157,6 +160,7 @@ export class Game {
                 id: userID,
                 timestamp: this.state.current.elapsed
             });
+            this.audio.correct();
         } else if (levDist(testing, expecting) / expecting.length < closeThreshold) {
             result = 'close-guess';
         }
@@ -233,6 +237,7 @@ export class Game {
         if (this.isTurnFinished()) {
             this.timer.stop();
             this.results.calculate();
+            this.audio.finish();
             this.registerMessage('word', undefined, this.state.current.word);
             if (!this.nextTurnTimer) {
                 this.nextTurnTimer = setTimeout(() => this.nextTurn(), resultsVisibilityTimeout);
