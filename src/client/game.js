@@ -30,8 +30,7 @@ export class Game {
             users: [],
             messages: [],
             canvas: {
-                objects: [],
-                transform: undefined
+                objects: []
             },
             current: {
                 drawing: null,
@@ -79,7 +78,6 @@ export class Game {
                 break;
             case 'draw-start':
                 if (!this.canDraw(userID)) return;
-                this.ensureTransformFinished();
                 var obj = {
                     type: 'line',
                     color: this.state.current.color,
@@ -90,17 +88,27 @@ export class Game {
                 break;
             case 'draw-move':
                 if (!this.canDraw(userID)) return;
-                this.ensureTransformFinished();
                 var lastIndex = this.state.canvas.objects.length - 1;
                 this.state.canvas.objects[lastIndex].points.push(event.point);
                 break;
-            case 'transform-preview':
+            case 'transform':
                 if (!this.canDraw(userID)) return;
-                this.state.canvas.transform = event.value;
+                var lastIndex = this.state.canvas.objects.length - 1;
+                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].type != 'transform' || this.state.canvas.objects[lastIndex].finished) {
+                    this.state.canvas.objects.push({
+                        type: 'transform'
+                    });
+                    lastIndex++;
+                }
+                var obj = this.state.canvas.objects[lastIndex];
+                Object.assign(obj, event.value);
                 break;
-            case 'transform-apply':
+            case 'transform-finish':
                 if (!this.canDraw(userID)) return;
-                this.state.canvas = this.canvas.persistTransform();
+                var lastIndex = this.state.canvas.objects.length - 1;
+                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].type == 'transform') {
+                    this.state.canvas.objects[lastIndex].finished = true;
+                }
                 break;
             case 'undo':
                 if (!this.canDraw(userID)) return;
@@ -133,8 +141,7 @@ export class Game {
         };
 
         this.state.canvas = {
-            objects: [],
-            transform: undefined
+            objects: []
         };
         
         this.registerMessage('break', this.state.current.drawing);
@@ -187,12 +194,6 @@ export class Game {
         this.state.users = this.results.apply();
         this.resetCurrentState();
         this.sync();
-    }
-
-    ensureTransformFinished() {
-        if (this.state.canvas.transform) {
-            this.canvas.persistTransform();
-        }
     }
 
     canDraw(userID = this.userID) {

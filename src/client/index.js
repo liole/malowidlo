@@ -64,13 +64,8 @@ dom().on('keyup', e => {
     if (e.altKey && e.code == 'KeyW') {
         dom('#word-container').classList.toggle('top');
     }
-    if (e.key == 'Alt' && (transformOrigin || scaleCurrent)) {
-        game.handle({
-            type: 'transform-apply'
-        });
-        transformOrigin = undefined;
-        scaleCurrent = undefined;
-        isDown = false;
+    if (e.key == 'Alt' && isTransform(e)) {
+        finishTransform();
     }
 });
 
@@ -111,99 +106,116 @@ socket.on('new-player', player => {
 
 
 function getPoint(e, touchIndex = 0) {
-    if (e.touches && e.touches.length <= touchIndex) {
-        touchIndex = 0;
-    }
+    var shift = touchIndex * (!e.touches || e.touches.length <= touchIndex) * 100;
+    var source = e.touches ? e.touches[Math.min(touchIndex, e.touches.length - 1)] : e;
     var rect = dom('#canvas').getBoundingClientRect();
     return {
-        x: +(100 * ((e.touches ? e.touches[touchIndex].clientX : (e.clientX + touchIndex*100)) - rect.x) / rect.width).toFixed(2),
-        y: +(50 * ((e.touches ? e.touches[touchIndex].clientY : (e.clientY + touchIndex*100)) - rect.y) / rect.height).toFixed(2)
+        x: +(100 * ((source.clientX + shift) - rect.x) / rect.width).toFixed(2),
+        y: +(50 * ((source.clientY + shift) - rect.y) / rect.height).toFixed(2)
     };
 }
 
-function getTransform(e) {
-    var transformCurrent = [getPoint(e, 0), getPoint(e, 1)];
-    var localOrigin = [...(transformOrigin || transformCurrent)];
-    if (scaleCurrent) {
-        localOrigin[1] = addVectors(localOrigin[0], multVector(getVector(...localOrigin), scaleCurrent));
-    }
-    return getTransformObject(localOrigin, transformCurrent);
-}
-
 function handleScroll(e) {
-    if (!game || !e.altKey || e.deltaMode) return;
-    if (!scaleCurrent) {
-        scaleCurrent = 1
-    }
+    if (!game) return;
 
-    const scaleCoef = 1.1;
-    var absoluteScroll = e.deltaY / window.devicePixelRatio / 100;
-    var currentScroll = Math.log(scaleCurrent) / Math.log(scaleCoef);
-    scaleCurrent = Math.pow(scaleCoef, currentScroll + absoluteScroll);
-
-    game.handle({
-        type: 'transform-preview',
-        value: getTransform(e)
-    });
+    processTransform(e);
 }
 
 function handleDown(e) {
-    if (game) {
-        isDown = true;
+    if (!game) return;
+
+    if (isTransform(e)) {
+        finishTransform();
+        prepareTransform(e);
+    } else {
         game.handle({
             type: 'draw-start',
             point: getPoint(e)
         });
-        transformOrigin = undefined;
-        scaleCurrent = undefined;
-        e.stopPropagation();
-        e.preventDefault();
     }
+    isDown = true;
+    e.stopPropagation();
+    e.preventDefault();
 }
 
 function handleUp(e) {
-    if (game && isDown) {
-        isDown = false;
-        if (transformOrigin) {
-            game.handle({
-                type: 'transform-apply'
-            });
-            transformOrigin = undefined;
-            scaleCurrent = undefined;
-        } else {
-            game.handle({
-                type: 'draw-stop'
-            });
-        }
-        e.stopPropagation();
-        e.preventDefault();
-    }
+    if (!game) return;
+
     if (game && !game.canDraw()) {
         dom('#wordInput').focus();
     }
+
+    if (isTransform(e)) {
+        finishTransform();
+    } else {
+        game.handle({
+            type: 'draw-stop'
+        });
+    }
+    isDown = false;
+    e.stopPropagation();
+    e.preventDefault();
 }
 
 function handleMove(e) {
-    if (game && isDown) {
-        if (transformOrigin) {
-            game.handle({
-                type: 'transform-preview',
-                value: getTransform(e)
-            });
-        } else if (e.touches && e.touches.length > 1 || e.altKey) {
-            transformOrigin = [getPoint(e, 0), getPoint(e, 1)];
-            game.handle({
-                type: 'undo'
-            });
-        } else {
-            game.handle({
-                type: 'draw-move',
-                point: getPoint(e)
-            });
-        }
-        e.stopPropagation();
-        e.preventDefault();
+    if (!game) return;
+
+    if (!isDown) {
+        finishTransform();
+    } else if (isTransform(e)) {
+        processTransform(e);
+    } else {
+        game.handle({
+            type: 'draw-move',
+            point: getPoint(e)
+        });
     }
+    e.stopPropagation();
+    e.preventDefault();
+}
+
+function processTransform(e) {
+    prepareTransform(e);
+
+    if (e.deltaY && !e.deltaMode) {
+        const scaleCoef = 1.1;
+        var absoluteScroll = e.deltaY / window.devicePixelRatio / 100;
+        var currentScroll = Math.log(scaleCurrent) / Math.log(scaleCoef);
+        scaleCurrent = Math.pow(scaleCoef, currentScroll - absoluteScroll);
+    }
+    
+    var transformCurrent = [getPoint(e, 0), getPoint(e, 1)];
+    transformCurrent[1] = addVectors(transformCurrent[0], multVector(getVector(...transformCurrent), scaleCurrent));
+
+    game.handle({
+        type: 'transform',
+        value: getTransformObject(transformOrigin, transformCurrent)
+    });
+}
+
+function prepareTransform(e) {
+    if (!scaleCurrent) {
+        scaleCurrent = 1;
+    }
+    if (!transformOrigin) {
+        transformOrigin = [getPoint(e, 0), getPoint(e, 1)];
+    }
+}
+
+function finishTransform() {
+    if (!transformOrigin && !scaleCurrent) return;
+
+    game.handle({
+        type: 'transform-finish'
+    });
+
+    transformOrigin = undefined;
+    scaleCurrent = undefined;
+    isDown = true;
+}
+
+function isTransform(e) {
+    return transformOrigin || scaleCurrent || e.touches && e.touches.length > 1 || e.altKey;
 }
 
 function connectUser() {

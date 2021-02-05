@@ -1,41 +1,31 @@
 import { Line } from './line.js';
+import { Transform } from './transform.js';
 
 export class Canvas {
 
     constructor(state) {
         this.objects = [];
         this.state = {
-            objects: [],
-            transform: undefined
+            objects: []
         };
         this.setState(state);
     }
 
     setState(state) {
         Object.assign(this.state, state);
-        if (this.state.transform) {
-            this.objects.forEach(o => o.setTransform(this.state.transform));
-        }
-    }
-
-    persistTransform() {
-        this.setState({
-            objects: this.objects.map(o => o.persistTransform()),
-            transform: undefined
-        });
-        return this.state;
     }
 
     createObject(state) {
         switch(state.type) {
             case 'line':
                 return new Line(state);
-                break;
+            case 'transform':
+                return new Transform(state);
         }
     }
 
     render() {
-        for (var obj of this.objects.splice(this.state.objects.length)) {
+        for (var obj of this.objects.splice(this.state.objects.length).reverse()) {
             obj.remove();
         }
 
