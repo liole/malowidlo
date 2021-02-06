@@ -34,6 +34,7 @@ export class Game {
                 objects: []
             },
             current: {
+                round: 0,
                 drawing: null,
                 guessed: [],
                 word: null,
@@ -134,6 +135,7 @@ export class Game {
         index = (index + 1) % this.state.users.length;
 
         this.state.current = {
+            round: this.state.current.round + (index == 0),
             drawing: this.state.users[index].id,
             guessed: [],
             word: null,

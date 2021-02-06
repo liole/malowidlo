@@ -45,6 +45,14 @@ export class Players {
             var hasGuessed = this.state.current.guessed.map(g => g.id).includes(player.id);
             $player.row.classList[ hasGuessed ? 'add' : 'remove']('guessed');
         }
+
+        if (this.state.current.drawing) {
+            var currentUserIndex = this.state.users.findIndex(u => u.id == this.state.current.drawing);
+            dom('.round-container').style.top = `${this.state.users.length * playerRowHeight + 10}px`;
+            dom('.round-container').show();
+            dom('#round').innerText = this.state.current.round;
+            dom('#sub-round').innerText = `${currentUserIndex + 1}/${this.state.users.length}`;
+        }
     }
 
 }

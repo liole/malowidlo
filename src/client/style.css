@@ -518,3 +518,32 @@ html, body {
     pointer-events: all;
     touch-action: auto;
 }
+
+.round-container {
+    display: none;
+    position: absolute;
+    top: 0px;
+    right: 30px;
+    padding: 20px;
+    text-align: center;
+}
+
+.round-container::before {
+    content: 'round';
+    font-family: 'Segoe Script';
+    transform: rotate(-90deg);
+    display: block;
+    position: absolute;
+    left: -20px;
+    top: 35px;
+    color: #88f;
+}
+
+#round {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#sub-round {
+    font-family: 'Consolas';
+}
