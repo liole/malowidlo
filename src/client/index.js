@@ -134,8 +134,6 @@ function handleDown(e) {
         });
     }
     isDown = true;
-    e.stopPropagation();
-    e.preventDefault();
 }
 
 function handleUp(e) {
@@ -153,8 +151,6 @@ function handleUp(e) {
         });
     }
     isDown = false;
-    e.stopPropagation();
-    e.preventDefault();
 }
 
 function handleMove(e) {
@@ -162,7 +158,10 @@ function handleMove(e) {
 
     if (!isDown) {
         finishTransform();
-    } else if (isTransform(e)) {
+        return;
+    }
+
+    if (isTransform(e)) {
         processTransform(e);
     } else {
         game.handle({
