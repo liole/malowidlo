@@ -7,15 +7,20 @@ export class Sound {
     }
 
     start() {
-        this.$start.play();
+        this.tryPlay(this.$start);
     }
 
     correct() {
-        this.$correct.play();
+        this.tryPlay(this.$correct);
     }
 
     finish() {
-        this.$finish.play();
+        this.tryPlay(this.$finish);
     }
 
+    tryPlay(audio) {
+        try {
+            audio.play();
+        } catch { }
+    }
 }

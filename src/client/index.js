@@ -63,8 +63,9 @@ dom().on('keyup', e => {
     }
     if (e.altKey && e.code == 'KeyW') {
         dom('#word-container').classList.toggle('top');
+        dom('#wordInput').focus();
     }
-    if (e.key == 'Alt' && isTransform(e)) {
+    if (e.key == 'Control' && isTransform(e)) {
         finishTransform();
     }
 });
@@ -86,7 +87,7 @@ dom().on('touchend', handleUp, { passive: false });
 dom().on('mousemove', handleMove, { passive: false });
 dom().on('touchmove', handleMove, { passive: false });
 
-dom().on('wheel', handleScroll);
+dom().on('wheel', handleScroll, { passive: false });
 
 socket.on('event', event => {
     game.handle(event);
@@ -118,7 +119,11 @@ function getPoint(e, touchIndex = 0) {
 function handleScroll(e) {
     if (!game) return;
 
-    processTransform(e);
+    if (isTransform(e)) {
+        processTransform(e);
+        e.stopPropagation();
+        e.preventDefault();
+    }
 }
 
 function handleDown(e) {
@@ -210,11 +215,11 @@ function finishTransform() {
 
     transformOrigin = undefined;
     scaleCurrent = undefined;
-    isDown = true;
+    isDown = false;
 }
 
 function isTransform(e) {
-    return transformOrigin || scaleCurrent || e.touches && e.touches.length > 1 || e.altKey;
+    return transformOrigin || scaleCurrent || e.touches && e.touches.length > 1 || e.ctrlKey;
 }
 
 function connectUser() {
