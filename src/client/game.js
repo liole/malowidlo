@@ -83,7 +83,7 @@ export class Game {
             case 'draw-start':
                 if (!this.canDraw(userID)) return;
                 var obj = {
-                    type: 'line',
+                    type: this.state.current.color ? 'line' : 'erase',
                     color: this.state.current.color,
                     width: this.state.current.thickness,
                     points: [ event.point ]
@@ -93,14 +93,14 @@ export class Game {
             case 'draw-move':
                 if (!this.canDraw(userID)) return;
                 var lastIndex = this.state.canvas.objects.length - 1;
-                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].type == 'line') {
+                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].points) {
                     this.state.canvas.objects[lastIndex].points.push(event.point);
                 }
                 break;
             case 'draw-stop':
                 if (!this.canDraw(userID)) return;
                 var lastIndex = this.state.canvas.objects.length - 1;
-                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].type == 'line' && this.state.canvas.objects[lastIndex].points.length == 1) {
+                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].points && this.state.canvas.objects[lastIndex].points.length == 1) {
                     this.state.canvas.objects[lastIndex].points.push(this.state.canvas.objects[lastIndex].points[0]);
                 }
                 break;

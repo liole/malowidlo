@@ -1,3 +1,4 @@
+import { Erase } from './erase.js';
 import { Line } from './line.js';
 import { Transform } from './transform.js';
 
@@ -19,6 +20,8 @@ export class Canvas {
         switch(state.type) {
             case 'line':
                 return new Line(state);
+            case 'erase':
+                return new Erase(state);
             case 'transform':
                 return new Transform(state);
         }
