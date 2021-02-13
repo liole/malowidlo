@@ -15,7 +15,8 @@ export class Colors {
     constructor(state, handle) {
         this.handle = handle;
         this.state = {
-            color: '#000000'
+            color: '#000000',
+            tool: 'brush'
         };
         this.setState(state);
     }
@@ -31,6 +32,8 @@ export class Colors {
                 type: 'color',
                 value: color
             });
+            e.stopPropagation();
+            e.preventDefault();
         }
     }
 
@@ -53,6 +56,9 @@ export class Colors {
         for (var color in this.$colors) {
             this.$colors[color].classList[color == this.state.color ? 'add' : 'remove']('selected');
         }
+        
+        dom.all('.tool-button').forEach(btn => btn.classList.remove('selected'));
+        dom(`#${this.state.tool}`).classList.add('selected');
 
         this.modified = false;
     }

@@ -4,6 +4,7 @@
     <title>Malowidło</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="https://cdn.jsdelivr.net/gh/blindman67/FloodFill2D/floodFill2D.js" type="text/javascript"></script>
     <script src="socket.io/socket.io.js" type="text/javascript"></script>
     <script src="index.js" type="module"></script>
     <link rel="stylesheet" href="style.css" type="text/css" />
@@ -54,7 +55,10 @@
       <div id="chat"></div>
     </div>
     <div id="toolbox" class="hide">
-      <div id="clear" title="Clear"></div>
+      <div id="brush" class="tool-button" title="Clear"></div>
+      <div id="fill" class="tool-button" title="Clear"></div>
+      <div id="undo" class="tool-button" title="Clear"></div>
+      <div id="clear" class="tool-button" title="Clear"></div>
       <input type="range" id="thickness" min=10 max=75 value=22 list="thickness-stops" title="Thickness"></input>
       <datalist id="thickness-stops">
         <option label="Thin">14</option>

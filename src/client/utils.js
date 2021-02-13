@@ -15,6 +15,27 @@ export function findLast(array, predicate, upTo = array.length - 1) {
     }
 }
 
+export function createDrwaingContext(width, height) {
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return canvas.getContext("2d");
+}
+
+export function drawSvg(ctx, domSvg, x = 0, y = 0, width = undefined, height = undefined) {
+    var textSvg = new XMLSerializer().serializeToString(domSvg);
+    var svg = new Blob([textSvg], { type: "image/svg+xml;charset=utf-8" }),
+    url = URL.createObjectURL(svg),
+    img = new Image();
+    return new Promise(resolve => {
+        img.onload = () => {
+            ctx.drawImage(img, x, y, width, height);
+            resolve();
+        };
+        img.src = url;
+    });
+}
+
 export function levDist(a, b) {
     var prev = Array.from({ length: b.length + 1 }, (_, i) => i);
     var curr = Array.from({ length: b.length + 1 }, _ => 0);

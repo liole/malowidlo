@@ -70,11 +70,10 @@ dom().on('keyup', e => {
     }
 });
 
-dom('#clear').on('click', e => {
-    if (game) {
-        game.handle({ type: 'clear' });
-    }
-});
+dom('#clear').on('click', e => handleEvent(e, { type: 'clear' }));
+dom('#undo').on('click', e => handleEvent(e, { type: 'undo' }));
+dom('#fill').on('click', e => handleEvent(e, { type: 'tool', value: 'fill' }));
+dom('#brush').on('click', e => handleEvent(e, { type: 'tool', value: 'brush' }));
 
 dom('#startGame').on('click', startGame);
 
@@ -137,6 +136,8 @@ function handleDown(e) {
             type: 'draw-start',
             point: getPoint(e)
         });
+        e.stopPropagation();
+        e.preventDefault();
     }
     isDown = true;
 }
@@ -174,6 +175,13 @@ function handleMove(e) {
             point: getPoint(e)
         });
     }
+    e.stopPropagation();
+    e.preventDefault();
+}
+
+function handleEvent(e, event) {
+    if (!game) return;
+    game.handle(event);
     e.stopPropagation();
     e.preventDefault();
 }

@@ -40,6 +40,7 @@ export class Game {
                 word: null,
                 letters: [],
                 elapsed: 0,
+                tool: 'brush',
                 color: '#000000',
                 thickness: 0.5
             },
@@ -74,6 +75,9 @@ export class Game {
                 var result = this.processGuess(event.value, userID);
                 this.registerMessage(result, userID, event.value);
                 break;
+            case 'tool':
+                this.state.current.tool = event.value;
+                break;
             case 'color':
                 this.state.current.color = event.value;
                 break;
@@ -82,26 +86,46 @@ export class Game {
                 break;
             case 'draw-start':
                 if (!this.canDraw(userID)) return;
-                var obj = {
-                    type: this.state.current.color ? 'line' : 'erase',
-                    color: this.state.current.color,
-                    width: this.state.current.thickness,
-                    points: [ event.point ]
-                };
-                this.state.canvas.objects.push(obj);
+                switch (this.state.current.tool) {
+                    case 'brush':
+                        var obj = {
+                            type: this.state.current.color ? 'line' : 'erase',
+                            color: this.state.current.color,
+                            width: this.state.current.thickness,
+                            points: [ event.point ]
+                        };
+                        this.state.canvas.objects.push(obj);
+                        break;
+                    case 'fill':
+                        var obj = {
+                            type: 'fill',
+                            color: this.state.current.color,
+                            point: event.point
+                        };
+                        this.state.canvas.objects.push(obj);
+                        break;
+                }
                 break;
             case 'draw-move':
                 if (!this.canDraw(userID)) return;
-                var lastIndex = this.state.canvas.objects.length - 1;
-                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].points) {
-                    this.state.canvas.objects[lastIndex].points.push(event.point);
+                switch (this.state.current.tool) {
+                    case 'brush':
+                        var lastIndex = this.state.canvas.objects.length - 1;
+                        if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].points) {
+                            this.state.canvas.objects[lastIndex].points.push(event.point);
+                        }
+                        break;
                 }
                 break;
             case 'draw-stop':
                 if (!this.canDraw(userID)) return;
-                var lastIndex = this.state.canvas.objects.length - 1;
-                if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].points && this.state.canvas.objects[lastIndex].points.length == 1) {
-                    this.state.canvas.objects[lastIndex].points.push(this.state.canvas.objects[lastIndex].points[0]);
+                switch (this.state.current.tool) {
+                    case 'brush':
+                        var lastIndex = this.state.canvas.objects.length - 1;
+                        if (lastIndex >= 0 && this.state.canvas.objects[lastIndex].points && this.state.canvas.objects[lastIndex].points.length == 1) {
+                            this.state.canvas.objects[lastIndex].points.push(this.state.canvas.objects[lastIndex].points[0]);
+                        }
+                        break;
                 }
                 break;
             case 'transform':
@@ -150,6 +174,7 @@ export class Game {
             word: null,
             letters: [],
             elapsed: 0,
+            tool: 'brush',
             color: '#000000',
             thickness: 0.5
         };

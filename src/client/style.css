@@ -471,6 +471,11 @@ html, body {
     cursor: pointer;
     pointer-events: all;
     touch-action: auto;
+    transition: all .5s;
+}
+
+.color-option:hover {
+    transform: scale(1.2);
 }
 
 .color-option[style=''] {
@@ -487,7 +492,7 @@ html, body {
     box-shadow: 0 0 0 3px #88f;
 }
 
-#clear {
+.tool-button {
     display: inline-block;
     margin: 3px;
     padding: 6px;
@@ -496,18 +501,39 @@ html, body {
     cursor: pointer;
     pointer-events: all;
     touch-action: auto;
+    transition: all .5s;
 }
 
-#clear:hover {
+.tool-button:hover {
     opacity: 1;
+    transform: scale(1.2);
 }
 
-#clear::before {
+.tool-button::before {
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     content: '\f2ed';
 }
 
+.tool-button.selected {
+    color: #66d;
+}
+
+#clear.tool-button::before {
+    content: '\f2ed';
+}
+
+#undo.tool-button::before {
+    content: '\f0e2';
+}
+
+#brush.tool-button::before {
+    content: '\f1fc';
+}
+
+#fill.tool-button::before {
+    content: '\f576';
+}
 
 #thickness {
     display: block;

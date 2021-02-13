@@ -1,4 +1,6 @@
+import dom from '../dom.js';
 import { Erase } from './erase.js';
+import { Fill } from './fill.js';
 import { Line } from './line.js';
 import { Transform } from './transform.js';
 
@@ -24,10 +26,18 @@ export class Canvas {
                 return new Erase(state);
             case 'transform':
                 return new Transform(state);
+            case 'fill':
+                return new Fill(state);
         }
     }
 
     render() {
+
+        if (this.state.objects.length == 0) {
+            dom('#canvas').clear();
+            this.objects = [];
+        }
+
         for (var obj of this.objects.splice(this.state.objects.length).reverse()) {
             obj.remove();
         }
